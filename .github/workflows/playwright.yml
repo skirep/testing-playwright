@@ -1,0 +1,52 @@
+name: Playwright Gherkin Tests
+
+on:
+  push:
+    branches: [main, master, copilot/**]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Run eDreams Booking Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install chromium --with-deps
+
+      - name: Run Cucumber tests
+        run: npm run test:ci
+        continue-on-error: true
+
+      - name: Upload test videos as artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-videos
+          path: videos/
+          retention-days: 7
+
+      - name: Upload test report as artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cucumber-report
+          path: reports/
+          retention-days: 7
