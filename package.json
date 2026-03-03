@@ -1,0 +1,26 @@
+{
+  "name": "testing-playwright",
+  "version": "1.0.0",
+  "description": "Testing framework with Gherkin and Playwright - eDreams booking example",
+  "scripts": {
+    "test": "cucumber-js",
+    "test:ci": "cucumber-js --format progress"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/skirep/testing-playwright.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/skirep/testing-playwright/issues"
+  },
+  "homepage": "https://github.com/skirep/testing-playwright#readme",
+  "devDependencies": {
+    "@cucumber/cucumber": "^12.7.0",
+    "@playwright/test": "^1.58.2",
+    "playwright": "^1.58.2"
+  }
+}
