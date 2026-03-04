@@ -10,6 +10,21 @@ Given('estic a la pàgina principal d\'eDreams', async function () {
   } catch {
     // No cookie banner present
   }
+  // Dismiss any promotional modal/overlay that may block the page
+  try {
+    const modalClose = this.page.locator(
+      '[class*="modal"] [class*="close"], [class*="overlay"] [class*="close"], ' +
+      '[class*="popup"] [class*="close"], [class*="dialog"] [class*="close"], ' +
+      'button[aria-label*="close" i], button[aria-label*="cerrar" i], ' +
+      'button[aria-label*="tancar" i], [data-testid*="close"], ' +
+      '[class*="modal__close"], [class*="Banner"] button[class*="close"]'
+    ).first();
+    await modalClose.waitFor({ state: 'visible', timeout: 5000 });
+    await modalClose.click();
+  } catch {
+    // No close button found; press Escape as a fallback to dismiss any overlay
+    await this.page.keyboard.press('Escape');
+  }
 });
 
 When('selecciono un vol d\'anada simple', async function () {
