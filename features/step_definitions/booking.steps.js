@@ -1,26 +1,53 @@
-// Improved visibility checks and scrolling in booking.steps.js
+const { Given, When, Then } = require('@cucumber/cucumber');
 
-const { Page } = require('playwright');
+Given('estic a la pàgina principal d\'eDreams', async function () {
+  await this.page.goto('https://www.edreams.es', { waitUntil: 'domcontentloaded' });
+  // Accept cookie consent if the banner is present
+  try {
+    const cookieBtn = this.page.locator('#onetrust-accept-btn-handler');
+    await cookieBtn.click({ timeout: 5000 });
+    await cookieBtn.waitFor({ state: 'hidden', timeout: 3000 });
+  } catch {
+    // No cookie banner present
+  }
+});
 
-async function scrollIntoViewIfNeeded(element) {
-    const isVisible = await element.isVisible();
-    if (!isVisible) {
-        await element.scrollIntoViewIfNeeded();
-    }
-}
+When('selecciono un vol d\'anada simple', async function () {
+  await this.page.getByText('Solo ida', { exact: true }).first().click();
+});
 
-async function clickElement(element) {
-    await scrollIntoViewIfNeeded(element);
-    await element.click();
-}
+When('introdueixo {string} com a origen del vol', async function (city) {
+  const input = this.page.locator('[placeholder*="Origen"], [aria-label*="Origen"]').first();
+  await input.click();
+  await input.fill(city);
+  await this.page.locator('[role="option"]').first().click({ timeout: 10000 });
+});
 
-async function handlePopup(page) {
-    const popup = page.locator('selector-for-popup');
-    if (await popup.isVisible()) {
-        await clickElement(popup);
-    }
-}
+When('introdueixo {string} com a destinació del vol', async function (city) {
+  const input = this.page.locator('[placeholder*="Destino"], [aria-label*="Destino"]').first();
+  await input.click();
+  await input.fill(city);
+  await this.page.locator('[role="option"]').first().click({ timeout: 10000 });
+});
 
-// Utilize the improved functions in your booking steps
+When('selecciono la data de sortida del mes vinent', async function () {
+  // Open the departure date picker
+  await this.page.locator('[class*="outbound"], [class*="depart"], [placeholder*="Ida"]').first().click({ timeout: 10000 });
+  // Navigate to next month if needed
+  try {
+    await this.page.locator('[class*="next-month"], [aria-label*="Next"], [aria-label*="Siguiente mes"]').first().click({ timeout: 3000 });
+  } catch {
+    // Navigation not needed or not found
+  }
+  // Select the first available future day
+  await this.page.locator('[class*="day"]:not([class*="disabled"]):not([class*="past"])').first().click({ timeout: 10000 });
+});
 
-module.exports = { clickElement, handlePopup };
+When('faig clic al botó de cerca', async function () {
+  await this.page.getByRole('button', { name: /buscar/i }).click();
+  await this.page.waitForLoadState('domcontentloaded', { timeout: 30000 });
+});
+
+Then('hauria de veure resultats de vols', async function () {
+  await this.page.waitForURL(/result|vuelos|flights/, { timeout: 30000 });
+});
