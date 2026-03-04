@@ -1,5 +1,8 @@
 const { Given, When, Then } = require('@cucumber/cucumber');
 
+// Delay between keystrokes to allow autocomplete suggestions to appear
+const AUTOCOMPLETE_INPUT_DELAY = 80;
+
 Given('estic a la pàgina principal d\'eDreams', async function () {
   await this.page.goto('https://www.edreams.es', { waitUntil: 'domcontentloaded' });
   // Accept cookie consent if the banner is present
@@ -34,15 +37,19 @@ When('selecciono un vol d\'anada simple', async function () {
 When('introdueixo {string} com a origen del vol', async function (city) {
   const input = this.page.locator('[placeholder*="Origen"], [aria-label*="Origen"]').first();
   await input.click();
-  await input.fill(city);
-  await this.page.locator('[role="option"]').first().click({ timeout: 10000 });
+  await input.pressSequentially(city, { delay: AUTOCOMPLETE_INPUT_DELAY });
+  const dropdown = this.page.locator('[role="option"]').first();
+  await dropdown.waitFor({ state: 'visible', timeout: 10000 });
+  await dropdown.click();
 });
 
 When('introdueixo {string} com a destinació del vol', async function (city) {
   const input = this.page.locator('[placeholder*="Destino"], [aria-label*="Destino"]').first();
   await input.click();
-  await input.fill(city);
-  await this.page.locator('[role="option"]').first().click({ timeout: 10000 });
+  await input.pressSequentially(city, { delay: AUTOCOMPLETE_INPUT_DELAY });
+  const dropdown = this.page.locator('[role="option"]').first();
+  await dropdown.waitFor({ state: 'visible', timeout: 10000 });
+  await dropdown.click();
 });
 
 When('selecciono la data de sortida del mes vinent', async function () {
