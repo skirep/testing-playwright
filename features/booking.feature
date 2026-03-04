@@ -1,13 +1,11 @@
-Feature: Booking
+# language: ca
+Funcionalitat: Cerca de vols a eDreams
 
-  Scenario: Successful booking
-    Given I am on the booking page
-    When I fill out the booking form
-    And I submit the form
-    Then I should see a confirmation message
-
-  Scenario: Failed booking
-    Given I am on the booking page
-    When I fill out the booking form with invalid data
-    And I submit the form
-    Then I should see an error message
+  Escenari: Cerca d'un vol d'anada simple de Barcelona a Madrid
+    Donat estic a la pàgina principal d'eDreams
+    Quan selecciono un vol d'anada simple
+    I introdueixo "Barcelona" com a origen del vol
+    I introdueixo "Madrid" com a destinació del vol
+    I selecciono la data de sortida del mes vinent
+    I faig clic al botó de cerca
+    Aleshores hauria de veure resultats de vols
