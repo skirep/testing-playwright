@@ -33,7 +33,6 @@ jobs:
 
       - name: Run Cucumber tests
         run: npm run test:ci
-        continue-on-error: true
 
       - name: Upload test videos as artifact
         if: always()
